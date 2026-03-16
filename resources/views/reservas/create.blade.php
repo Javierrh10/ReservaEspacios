@@ -61,7 +61,7 @@
                                     <option value="" disabled selected>Selecciona hora</option>
                                     @foreach($franjas as $franja)
                                         <option value="{{ $franja->id }}" {{ old('franja_horaria_id') == $franja->id ? 'selected' : '' }}>
-                                            {{ $franja->nombre }} ({{ substr($franja->hora_inicio, 0, 5) }} - {{ substr($franja->hora_fin, 0, 5) }})
+                                            {{ $franja->nombre }} ({{ $franja->hora_inicio_formateada }} - {{ $franja->hora_fin_formateada }})
                                         </option>
                                     @endforeach
                                 </select>

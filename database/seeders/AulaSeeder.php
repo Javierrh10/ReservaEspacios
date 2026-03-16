@@ -12,12 +12,18 @@ class AulaSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        for ($i = 1; $i <= 10; $i++) {
-            Aula::create([
-                'nombre' => "Aula $i",
-                'capacidad' => rand(20, 35),
-            ]);
+        $aulas = [
+            ['nombre' => 'Aula 101', 'capacidad' => 30],
+            ['nombre' => 'Aula 102', 'capacidad' => 30],
+            ['nombre' => 'Aula 201', 'capacidad' => 25],
+            ['nombre' => 'Taller de Redes', 'capacidad' => 20],
+            ['nombre' => 'Taller de Hardware', 'capacidad' => 15],
+            ['nombre' => 'Biblioteca', 'capacidad' => 50],
+            ['nombre' => 'Salón de Actos', 'capacidad' => 100],
+        ];
+
+        foreach ($aulas as $aula) {
+            Aula::create($aula);
         }
     }
 }

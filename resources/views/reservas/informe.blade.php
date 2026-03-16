@@ -1,73 +1,87 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="max-w-7xl mx-auto flex justify-between items-center text-gray-200">
-            <h2 class="font-semibold text-xl leading-tight italic">
-                <i class="bi bi-file-earmark-bar-graph me-2 text-green-400"></i> Reporte de Ocupación Semanal
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <div class="max-w-7xl mx-auto flex justify-between items-center text-white">
+            <h2 class="font-bold text-2xl tracking-tight">
+                <i class="bi bi-file-earmark-bar-graph me-2 text-emerald-400"></i> Informe Semanal
             </h2>
-            <span class="text-xs bg-gray-700 px-4 py-2 rounded-full border border-gray-600 font-bold tracking-wider">
+            <span
+                class="text-[11px] bg-slate-800 px-6 py-2 rounded-lg border border-slate-700 font-bold tracking-wider uppercase text-slate-300">
                 {{ $inicioSemana }} — {{ $finSemana }}
             </span>
         </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-900 min-h-screen">
+    <div class="py-12 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
-                
-                <div class="p-6 bg-gray-700/20 border-b border-gray-700">
-                    <p class="text-gray-400 text-sm text-center">
-                        <i class="bi bi-info-circle me-2"></i> Resumen detallado de actividades planificadas para todos los departamentos.
+
+            <div class="glass-card rounded-[2rem] overflow-hidden border-white/5">
+
+                <div class="p-8 bg-white/[0.02] border-b border-white/5">
+                    <p class="text-gray-400 text-sm text-center font-medium">
+                        <i class="bi bi-info-circle me-3 text-blue-400"></i> Resumen detallado de actividades
+                        planificadas para todos los departamentos.
                     </p>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-gray-300 border-collapse">
-                        <thead class="bg-gray-900/60 text-gray-500 text-xs uppercase font-black tracking-widest text-center">
-                            <tr>
-                                <th class="p-5 border-b border-gray-700">Día / Fecha</th>
-                                <th class="p-5 border-b border-gray-700 text-left">Franja</th>
-                                <th class="p-5 border-b border-gray-700">Espacio (Aula)</th>
-                                <th class="p-5 border-b border-gray-700">Profesor</th>
-                                <th class="p-5 border-b border-gray-700">Grupo</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-700 text-center">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <thead>
+                                <tr
+                                    class="bg-slate-800/50 text-slate-400 text-[11px] uppercase font-bold tracking-wider">
+                                    <th class="px-8 py-5">Día / Fecha</th>
+                                    <th class="px-8 py-5 text-left">Franja</th>
+                                    <th class="px-8 py-5">Espacio (Aula)</th>
+                                    <th class="px-8 py-5">Profesor</th>
+                                    <th class="px-8 py-5">Grupo</th>
+                                </tr>
+                            </thead>
+                        <tbody class="divide-y divide-white/5">
                             @foreach($reservas as $reserva)
-                            <tr class="hover:bg-gray-700/40 transition-colors duration-200">
-                                <td class="p-5 font-mono text-sm">
-                                    {{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}
-                                </td>
-                                <td class="p-5 text-left">
-                                    <span class="text-green-400 font-bold">{{ $reserva->franja->nombre }}</span>
-                                    <div class="text-[10px] text-gray-500 uppercase">{{ $reserva->franja->hora_inicio }} - {{ $reserva->franja->hora_fin }}</div>
-                                </td>
-                                <td class="p-5 italic text-gray-400">
-                                    {{ $reserva->aula->nombre }}
-                                </td>
-                                <td class="p-5 font-semibold text-gray-200">
-                                    {{ $reserva->profesor->nombre ?? 'N/A' }}
-                                </td>
-                                <td class="p-5">
-                                    <span class="bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-600 text-blue-400 font-bold text-xs">
-                                        {{ $reserva->group ?? $reserva->grupo }}
-                                    </span>
-                                </td>
-                            </tr>
+                                <tr class="hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-8 py-6 font-mono text-sm text-indigo-400">
+                                        {{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}
+                                    </td>
+                                    <td class="px-8 py-6 text-left">
+                                        <span
+                                            class="text-emerald-400 font-semibold block mb-1 uppercase text-sm tracking-wide">{{ $reserva->franja->nombre }}</span>
+                                        <div class="text-[10px] text-slate-500 font-mono">
+                                            {{ $reserva->franja->hora_inicio_formateada }} -
+                                            {{ $reserva->franja->hora_fin_formateada }}</div>
+                                    </td>
+                                    <td class="px-8 py-6">
+                                        <span class="text-slate-300 flex items-center gap-2">
+                                            <i class="bi bi-door-open text-slate-600"></i> {{ $reserva->aula->nombre }}
+                                        </span>
+                                    </td>
+                                    <td class="px-8 py-6">
+                                        <span
+                                            class="text-white font-semibold">{{ $reserva->profesor->nombre ?? 'N/A' }}</span>
+                                    </td>
+                                    <td class="px-8 py-6">
+                                        <span
+                                            class="px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-bold text-[10px] tracking-wider uppercase">
+                                            {{ $reserva->group ?? $reserva->grupo }}
+                                        </span>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
 
                 @if($reservas->isEmpty())
-                    <div class="p-20 text-center text-gray-500 italic">
-                        No hay registros para este periodo.
+                    <div class="px-8 py-32 text-center">
+                        <i class="bi bi-journal-x text-5xl text-gray-700 mb-4"></i>
+                        <p class="text-gray-500 font-medium">No hay registros para este periodo.</p>
                     </div>
                 @endif
             </div>
 
             <div class="mt-8 flex justify-center">
-                <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-white transition text-sm flex items-center gap-2">
+                <a href="{{ route('dashboard') }}"
+                    class="text-gray-500 hover:text-white transition-all text-sm flex items-center gap-2 font-medium">
                     <i class="bi bi-arrow-left"></i> Volver al panel principal
                 </a>
             </div>

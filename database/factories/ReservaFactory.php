@@ -20,12 +20,12 @@ class ReservaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
             'fecha' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d'),
-            'aula_id' => Aula::all()->random()->id,
-            'franja_horaria_id' => FranjaHoraria::all()->random()->id,
-            'profesor_id' => Profesor::all()->random()->id,
-            'grupo' => $this->faker->bothify('#º-???')
+            'aula_id' => Aula::factory(),
+            'franja_horaria_id' => FranjaHoraria::factory(),
+            'profesor_id' => Profesor::factory(),
+            'grupo' => $this->faker->randomElement(['1º DAW', '2º DAW', '1º ASIR', '2º ASIR', '1º SMR', '2º SMR']),
+            'motivo' => $this->faker->sentence(3),
         ];
     }
 }

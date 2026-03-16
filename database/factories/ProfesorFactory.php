@@ -18,11 +18,11 @@ class ProfesorFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::all()->random()->id,
+            'user_id' => User::factory(),
             'nombre' => $this->faker->firstName(),
             'apellidos' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
-            'departamento' => $this->faker->randomElement(['Informática', 'Matemáticas', 'Física', 'Química', 'Biología']),
+            'departamento' => $this->faker->randomElement(['Informática', 'Matemáticas', 'Física', 'Química', 'Sistemas', 'Redes']),
         ];
     }
 }

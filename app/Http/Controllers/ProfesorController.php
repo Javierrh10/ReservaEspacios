@@ -11,7 +11,9 @@ class ProfesorController extends Controller
     public function index()
     {
         $profesores = Profesor::with('user')->get();
-        return view('profesores.index', compact('profesores'));
+        // Solo usuarios que no son ya profesores
+        $usuariosDisponibles = User::whereDoesntHave('profesor')->get();
+        return view('profesores.index', compact('profesores', 'usuariosDisponibles'));
     }
 
     public function create()
@@ -24,7 +26,9 @@ class ProfesorController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'especialidad' => 'required|string',
+            'apellidos' => 'required|string|max:255',
+            'email' => 'required|email|unique:profesores,email',
+            'departamento' => 'required|string',
             'user_id' => 'required|exists:users,id|unique:profesores,user_id',
         ]);
 
@@ -43,6 +47,14 @@ class ProfesorController extends Controller
     public function update(Request $request, $id)
     {
         $profesor = Profesor::findOrFail($id);
+        
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'email' => 'required|email|unique:profesores,email,' . $id,
+            'departamento' => 'required|string',
+        ]);
+
         $profesor->update($request->all());
 
         return redirect()->route('profesores.index')->with('success', 'Profesor actualizado');
@@ -50,7 +62,12 @@ class ProfesorController extends Controller
 
     public function destroy($id)
     {
-        Profesor::destroy($id);
-        return redirect()->route('profesores.index')->with('success', 'Profesor eliminado');
+        $profesor = Profesor::findOrFail($id);
+        
+        // Evitar excepción de clave foránea eliminando sus reservas primero
+        $profesor->reservas()->delete();
+        $profesor->delete();
+
+        return redirect()->route('profesores.index')->with('success', 'Profesor y sus reservas eliminados');
     }
 }

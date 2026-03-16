@@ -1,44 +1,76 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Informe Semanal</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
-        <h1 class="text-2xl font-bold mb-4">Informe Semanal ({{ $inicioSemana }} al {{ $finSemana }})</h1>
-        
-        <table class="w-full border">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="p-2 border">Fecha</th>
-                    <th class="p-2 border">Tramo</th>
-                    <th class="p-2 border">Aula</th>
-                    <th class="p-2 border">Profesor</th>
-                    <th class="p-2 border">Grupo</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($reservas as $reserva)
-                <tr>
-                    <td class="p-2 border">{{ $reserva->fecha }}</td>
-                    <td class="p-2 border">
-                        {{ $reserva->franja->nombre ?? 'Sin franja' }} 
-                        ({{ $reserva->franja->hora_inicio ?? '' }})
-                    </td>
-                    <td class="p-2 border">{{ $reserva->aula->nombre ?? 'N/A' }}</td>
-                    <td class="p-2 border">{{ $reserva->profesor->nombre ?? 'N/A' }}</td>
-                    <td class="p-2 border">{{ $reserva->grupo }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        
-        <div class="mt-4">
-            <a href="{{ route('dashboard') }}" class="text-blue-500 underline">Volver al Inicio</a>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="max-w-7xl mx-auto flex justify-between items-center text-gray-200">
+            <h2 class="font-semibold text-xl leading-tight italic">
+                <i class="bi bi-file-earmark-bar-graph me-2 text-green-400"></i> Reporte de Ocupación Semanal
+            </h2>
+            <span class="text-xs bg-gray-700 px-4 py-2 rounded-full border border-gray-600 font-bold tracking-wider">
+                {{ $inicioSemana }} — {{ $finSemana }}
+            </span>
+        </div>
+    </x-slot>
+
+    <div class="py-12 bg-gray-900 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl">
+                
+                <div class="p-6 bg-gray-700/20 border-b border-gray-700">
+                    <p class="text-gray-400 text-sm text-center">
+                        <i class="bi bi-info-circle me-2"></i> Resumen detallado de actividades planificadas para todos los departamentos.
+                    </p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-gray-300 border-collapse">
+                        <thead class="bg-gray-900/60 text-gray-500 text-xs uppercase font-black tracking-widest text-center">
+                            <tr>
+                                <th class="p-5 border-b border-gray-700">Día / Fecha</th>
+                                <th class="p-5 border-b border-gray-700 text-left">Franja</th>
+                                <th class="p-5 border-b border-gray-700">Espacio (Aula)</th>
+                                <th class="p-5 border-b border-gray-700">Profesor</th>
+                                <th class="p-5 border-b border-gray-700">Grupo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700 text-center">
+                            @foreach($reservas as $reserva)
+                            <tr class="hover:bg-gray-700/40 transition-colors duration-200">
+                                <td class="p-5 font-mono text-sm">
+                                    {{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}
+                                </td>
+                                <td class="p-5 text-left">
+                                    <span class="text-green-400 font-bold">{{ $reserva->franja->nombre }}</span>
+                                    <div class="text-[10px] text-gray-500 uppercase">{{ $reserva->franja->hora_inicio }} - {{ $reserva->franja->hora_fin }}</div>
+                                </td>
+                                <td class="p-5 italic text-gray-400">
+                                    {{ $reserva->aula->nombre }}
+                                </td>
+                                <td class="p-5 font-semibold text-gray-200">
+                                    {{ $reserva->profesor->nombre ?? 'N/A' }}
+                                </td>
+                                <td class="p-5">
+                                    <span class="bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-600 text-blue-400 font-bold text-xs">
+                                        {{ $reserva->group ?? $reserva->grupo }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                @if($reservas->isEmpty())
+                    <div class="p-20 text-center text-gray-500 italic">
+                        No hay registros para este periodo.
+                    </div>
+                @endif
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-white transition text-sm flex items-center gap-2">
+                    <i class="bi bi-arrow-left"></i> Volver al panel principal
+                </a>
+            </div>
         </div>
     </div>
-</body>
-</html>
+</x-app-layout>

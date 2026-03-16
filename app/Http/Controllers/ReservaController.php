@@ -40,33 +40,25 @@ class ReservaController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validamos los datos
         $request->validate([
-            'aula_id' => 'required|exists:aulas,id',
+            'aula_id' => 'required',
             'fecha' => 'required|date',
-            'franja_horaria_id' => 'required|exists:franja_horarias,id',
-            'grupo' => 'required|string',
+            'franja_horaria_id' => 'required',
+            'grupo' => 'required',
         ]);
 
-        // 2. BUSCAMOS AL PROFESOR (Esto es clave)
-        // Buscamos en la tabla profesores el  que tenga el user_id del que está logueado
-        $profesor = \App\Models\Profesor::where('user_id', auth()->id())->first();
+        // COMPROBACIÓN DE DISPONIBILIDAD
+        $existe = Reserva::where('aula_id', $request->aula_id)
+            ->where('fecha', $request->fecha)
+            ->where('franja_horaria_id', $request->franja_horaria_id)
+            ->exists();
 
-        // Si no lo encuentra (por ejemplo, si el admin no es "profesor"), 
-        // usamos el ID 1 para que no falle la foreign key mientras pruebas.
-        $profesorId = $profesor ? $profesor->id : 1;
+        if ($existe) {
+            return back()->withErrors(['aula_id' => 'Lo siento, este aula ya está reservada para esa fecha y hora.'])->withInput();
+        }
 
-        // 3. CREAMOS LA RESERVA
-        Reserva::create([
-            'profesor_id'       => $profesorId,
-            'aula_id'           => $request->aula_id,
-            'fecha'             => $request->fecha,
-            'franja_horaria_id' => $request->franja_horaria_id,
-            'grupo'             => $request->grupo,
-            'motivo'            => $request->motivo,
-        ]);
-
-        return redirect()->route('reservas.index')->with('success', '¡Reserva guardada!');
+        Reserva::create($request->all());
+        return redirect()->route('reservas.index')->with('success', 'Reserva creada.');
     }
 
     /**

@@ -1,74 +1,98 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Reserva</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-100 p-6">
-
-    <div class="max-w-2xl mx-auto bg-white p-8 border border-gray-300 rounded-xl shadow-lg">
-        <div class="flex items-center mb-6">
-            <i class="bi bi-pencil-square text-blue-600 text-3xl mr-3"></i>
-            <h1 class="text-2xl font-bold text-gray-800">Editar Reserva #{{ $reserva->id }}</h1>
+<x-app-layout>
+    <x-slot name="header">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <div class="max-w-7xl mx-auto flex items-center text-gray-200">
+            <h2 class="font-semibold text-xl leading-tight">
+                <i class="bi bi-pencil-square me-2 text-blue-400"></i> Modificar Reserva #{{ $reserva->id }}
+            </h2>
         </div>
+    </x-slot>
 
-        <form action="{{ route('reservas.update', $reserva->id) }}" method="POST">
-            @csrf
-            @method('PUT') {{-- ¡Vital para que Laravel sepa que es una actualización! --}}
+    <div class="py-12 bg-gray-900 min-h-screen">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            
+            @if ($errors->any())
+                <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-800 rounded shadow-md">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <div class="mb-4">
-                <label class="block font-medium text-gray-700"><i class="bi bi-door-open me-1"></i> Aula:</label>
-                <select name="aula_id" required class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500">
-                    @foreach($aulas as $aula)
-                        <option value="{{ $aula->id }}" {{ $reserva->aula_id == $aula->id ? 'selected' : '' }}>
-                            {{ $aula->nombre }} (Capacidad: {{ $aula->capacidad }})
-                        </option>
-                    @endforeach
-                </select>
+            <div class="bg-gray-800 shadow-2xl rounded-2xl border border-gray-700 overflow-hidden">
+                <div class="p-8">
+                    <form action="{{ route('reservas.update', $reserva->id) }}" method="POST" class="space-y-6">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    <i class="bi bi-calendar3 me-1"></i> Fecha de Reserva
+                                </label>
+                                <input type="date" name="fecha" value="{{ old('fecha', $reserva->fecha) }}" required 
+                                       class="w-full bg-gray-900 border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    <i class="bi bi-door-open me-1"></i> Aula / Espacio
+                                </label>
+                                <select name="aula_id" required class="w-full bg-gray-900 border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                    @foreach($aulas as $aula)
+                                        <option value="{{ $aula->id }}" {{ $reserva->aula_id == $aula->id ? 'selected' : '' }}>
+                                            {{ $aula->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    <i class="bi bi-clock me-1"></i> Tramo Horario
+                                </label>
+                                <select name="franja_horaria_id" required class="w-full bg-gray-900 border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                    @foreach($franjas as $franja)
+                                        <option value="{{ $franja->id }}" {{ $reserva->franja_horaria_id == $franja->id ? 'selected' : '' }}>
+                                            {{ $franja->nombre }} ({{ substr($franja->hora_inicio, 0, 5) }} - {{ substr($franja->hora_fin, 0, 5) }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    <i class="bi bi-people me-1"></i> Grupo
+                                </label>
+                                <input type="text" name="grupo" value="{{ old('grupo', $reserva->grupo) }}" required placeholder="Ej: 1º DAM"
+                                       class="w-full bg-gray-900 border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">
+                                <i class="bi bi-chat-left-text me-1"></i> Motivo de la reserva
+                            </label>
+                            <textarea name="motivo" rows="3" class="w-full bg-gray-900 border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition">{{ old('motivo', $reserva->motivo) }}</textarea>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-700">
+                            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg border border-blue-500/50 flex items-center justify-center">
+                                <i class="bi bi-check2-circle me-2 text-lg"></i> ACTUALIZAR RESERVA
+                            </button>
+                            <a href="{{ route('reservas.index') }}" class="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold py-3 px-6 rounded-xl text-center transition-all border border-gray-600">
+                                CANCELAR
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block font-medium text-gray-700"><i class="bi bi-calendar3 me-1"></i> Fecha:</label>
-                <input type="date" name="fecha" value="{{ $reserva->fecha }}" required 
-                       class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500">
-            </div>
-
-            <div class="mb-4">
-                <label class="block font-medium text-gray-700"><i class="bi bi-clock me-1"></i> Tramo Horario (Calendario):</label>
-                <select name="franja_horaria_id" required class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500">
-                    @foreach($franjas as $franja)
-                        <option value="{{ $franja->id }}" {{ $reserva->franja_horaria_id == $franja->id ? 'selected' : '' }}>
-                            {{ $franja->nombre }} ({{ \Carbon\Carbon::parse($franja->hora_inicio)->format('H:i') }} - {{ \Carbon\Carbon::parse($franja->hora_fin)->format('H:i') }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label class="block font-medium text-gray-700"><i class="bi bi-people me-1"></i> Grupo de alumnos:</label>
-                <input type="text" name="grupo" value="{{ $reserva->grupo }}" required 
-                       class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500">
-            </div>
-
-            <div class="mb-6">
-                <label class="block font-medium text-gray-700"><i class="bi bi-chat-left-text me-1"></i> Motivo:</label>
-                <textarea name="motivo" rows="3" required 
-                          class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500">{{ $reserva->motivo }}</textarea>
-            </div>
-
-            <div class="flex gap-4">
-                <button type="submit" class="flex-1 bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition shadow">
-                    <i class="bi bi-check-lg mr-1"></i> Guardar Cambios
-                </button>
-                <a href="{{ route('reservas.index') }}" class="flex-1 bg-gray-200 text-gray-700 font-bold py-2 rounded-md hover:bg-gray-300 transition text-center shadow">
-                    Cancelar
-                </a>
-            </div>
-        </form>
+            <p class="mt-6 text-center text-gray-500 text-xs">
+                <i class="bi bi-info-circle me-1"></i> Los cambios se verán reflejados inmediatamente en el informe semanal.
+            </p>
+        </div>
     </div>
-
-</body>
-</html>
+</x-app-layout>

@@ -9,15 +9,15 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: '0.0.0.0',        // ← Escucha en todas las interfaces (Docker)
+        host: '0.0.0.0',
         port: 5173,
-        strictPort: true,       // ← Falla si el puerto está ocupado
+        strictPort: true,
         hmr: {
-            host: 'localhost',  // ← El navegador conecta a localhost
+            host: 'localhost',
             port: 5173,
         },
         watch: {
-            usePolling: true,   // ← Necesario para que funcione en Docker
+            usePolling: true,
         },
     },
 });

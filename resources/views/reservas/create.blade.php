@@ -3,38 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Nueva Reserva</title>
-    <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
+    {{-- Cambiamos a la carga de Vite para que se vea bien con Breeze --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <div class="contenedor">
-        <h1>Reservar Espacio</h1>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-md mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800">Reservar Espacio</h1>
 
         <form action="{{ route('reservas.store') }}" method="POST">
-            @csrf {{-- ¡IMPORTANTE! Laravel no deja enviar formularios sin esto por seguridad --}}
+            @csrf 
             
-            <label>Selecciona el Aula:</label><br>
-            <select name="aula_id" required>
+            <label class="block font-medium text-gray-700">Selecciona el Aula:</label>
+            <select name="aula_id" required class="w-full mt-1 mb-4 border-gray-300 rounded-md shadow-sm">
                 @foreach($aulas as $aula)
                     <option value="{{ $aula->id }}">{{ $aula->nombre }} (Capacidad: {{ $aula->capacidad }})</option>
                 @endforeach
-            </select><br><br>
+            </select>
 
-            <label>Fecha:</label><br>
-            <input type="date" name="fecha" required><br><br>
+            <label class="block font-medium text-gray-700">Fecha:</label>
+            <input type="date" name="fecha" required class="w-full mt-1 mb-4 border-gray-300 rounded-md shadow-sm">
 
-            <label>Hora Inicio:</label><br>
-            <input type="time" name="hora_inicio" required><br><br>
+            {{-- --- ESTO ES EL CALENDARIO DEL ESPACIO QUE PIDIÓ EL PROFE --- --}}
+            <label class="block font-medium text-gray-700">Tramo Horario (Calendario):</label>
+            <select name="franja_horaria_id" required class="w-full mt-1 mb-4 border-gray-300 rounded-md shadow-sm">
+                @foreach($franjas as $franja)
+                    <option value="{{ $franja->id }}">
+                        {{ $franja->nombre }} ({{ \Carbon\Carbon::parse($franja->hora_inicio)->format('H:i') }} - {{ \Carbon\Carbon::parse($franja->hora_fin)->format('H:i') }})
+                    </option>
+                @endforeach
+            </select>
+            {{-- ---------------------------------------------------------- --}}
 
-            <label>Hora Fin:</label><br>
-            <input type="time" name="hora_fin" required><br><br>
+            <label class="block font-medium text-gray-700">Grupo de alumnos:</label>
+            <input type="text" name="grupo" placeholder="Ej: 2º DAW" required class="w-full mt-1 mb-4 border-gray-300 rounded-md shadow-sm">
 
-            <label>Grupo de alumnos:</label><br>
-            <input type="text" name="grupo" placeholder="Ej: 2º DAW" required><br><br>
+            <label class="block font-medium text-gray-700">Motivo:</label>
+            <textarea name="motivo" rows="3" required class="w-full mt-1 mb-6 border-gray-300 rounded-md shadow-sm"></textarea>
 
-            <label>Motivo:</label><br>
-            <textarea name="motivo" rows="3" required></textarea><br><br>
-
-            <button type="submit" class="boton">Confirmar Reserva</button>
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-200">
+                Confirmar Reserva
+            </button>
         </form>
     </div>
 </body>

@@ -16,10 +16,10 @@ return new class extends Migration
             
             $table->foreignId('profesor_id')->constrained('profesores');
             $table->foreignId('aula_id')->constrained('aulas');
+            
+            $table->foreignId('franja_horaria_id')->constrained('franja_horarias');
 
             $table->date('fecha');
-            $table->dateTime('hora_inicio');
-            $table->dateTime('hora_fin');
             $table->string('grupo')->nullable();
             $table->string('motivo')->nullable();
 

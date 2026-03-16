@@ -18,17 +18,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        \App\Models\User::factory()->create([
             'name' => 'Profesor Admin',
-            'email' => 'admin@admin.com'
-        ]); 
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('password'),
+        ]);
 
-        User::factory(5)->create();
+        $aulas = ['Aula 1', 'Aula 2', 'Taller de Redes'];
+        foreach ($aulas as $a) {
+            \App\Models\Aula::create(['nombre' => $a, 'capacidad' => 35]);
+        }
 
-        $this->call(AulaSeeder::class);
+        $franjas = ['1ª Hora', '2ª Hora', '3ª Hora', '4ª Hora', '5ª Hora', '6ª Hora'];
+        foreach ($franjas as $f) {
+            \App\Models\FranjaHoraria::create(['nombre' => $f, 'hora_inicio' => '08:00', 'hora_fin' => '09:00']);
+        }
 
-        $this->call(FranjaHorariaSeeder::class);
+        \App\Models\User::factory(10)->create()->each(function ($user) {
+            \App\Models\Profesor::factory()->create(['user_id' => $user->id]);
+        });
 
-        Profesor::factory(10)->create();
+        \App\Models\Reserva::factory(20)->create();
     }
 }

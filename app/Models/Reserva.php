@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Reserva extends Model
 {
     //
+    use HasFactory;
     protected $fillable = ['profesor_id', 'aula_id', 'fecha', 'franja_horaria_id', 'grupo', 'motivo'];
 
     public function profesor() {
